@@ -15,6 +15,7 @@ import FlowBanner from "./flow-banner";
 import RelationCards from "./relation-cards";
 import FinanceTiming from "./finance-timing";
 import ResultFooterMeta from "./result-footer-meta";
+import ShareButton from "./share-button";
 import {
   buildAnnualFlow,
   buildRelationGuide,
@@ -134,6 +135,7 @@ export default function SajuForm({ userId }: { userId: string }) {
             <ResultFooterMeta generatedAt={result.generatedAt} saved={result.saved} />
             <div className="result-meta">
               <button type="button" onClick={() => result.saved ? void handleDelete(result) : setResult(null)}>{result.saved ? "이 결과 삭제" : "화면에서 닫기"}</button>
+              {result.saved && result.id && <ShareButton readingId={result.id} />}
             </div>
             <h2 id="result-title">{result.reading.headline}</h2>
             <p className="tendency">{result.reading.tendency}</p>

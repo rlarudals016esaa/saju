@@ -431,6 +431,85 @@ input:focus-visible {
   font-size: 13px;
 }
 
+.share-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+}
+
+.share-control span,
+.share-control a {
+  color: #f8fbff;
+  font-weight: 500;
+}
+
+.share-control a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.shared-header {
+  padding-bottom: 56px;
+}
+
+.share-eyebrow {
+  margin: 0 0 12px;
+  color: #bceafa;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.shared-reading-card {
+  padding-top: 8px;
+}
+
+.shared-result {
+  margin-top: 0;
+}
+
+.shared-result-meta {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.shared-cta {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin: 32px 0 16px;
+  padding: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 16px;
+  text-align: center;
+}
+
+.shared-cta p,
+.shared-cta small {
+  margin: 0;
+}
+
+.shared-cta a,
+.shared-home-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 10px 20px;
+  color: #ffffff;
+  border: 1px solid var(--primary);
+  border-radius: 12px;
+  background: var(--primary);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.shared-cta small {
+  color: var(--muted);
+}
+
 .result h2 {
   margin: 8px 0 14px;
   font-size: clamp(27px, 4vw, 36px);

@@ -23,3 +23,4 @@ Spec을 만들면 아래 목록에 파일명을 추가합니다. 구현과 검�
 - [x] `015-result-section-heading-size.md` — 오행 분포·분야별 조언 제목 크기 통일 및 검증 완료
 - [x] `016-result-footer-meta.md` — 결과 정보를 하단 서체 표기 앞으로 이동 및 자동 검증 완료
 - [x] `017-flow-banner-image-opacity.md` — 운의 흐름 배너 이미지 50% 투명도 적용 및 검증 완료
+- [ ] `019-shared-result-links.md` — 로그인 없이 읽는 결과 공유 링크

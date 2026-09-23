@@ -10,6 +10,7 @@ import FlowBanner from "../flow-banner";
 import FinanceTiming from "../finance-timing";
 import ResultFooterMeta from "../result-footer-meta";
 import RelationCards from "../relation-cards";
+import ShareButton from "../share-button";
 
 export default function HistoryView() {
   const [items, setItems] = useState<HistoryItem[]>([]);
@@ -96,6 +97,7 @@ export default function HistoryView() {
       {selected && (
         <section className="result" aria-labelledby="history-result-title">
           <ResultFooterMeta generatedAt={selected.generatedAt} saved />
+          {selected.id && <div className="result-meta"><ShareButton readingId={selected.id} /></div>}
           <h2 id="history-result-title">{selected.reading.headline}</h2>
           <p className="tendency">{selected.reading.tendency}</p>
           <div className="summary-grid">
