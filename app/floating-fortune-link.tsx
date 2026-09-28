@@ -1,17 +1,23 @@
-import FortuneCharacterArt from "./fortune-character-art";
+import Image from "next/image";
+import Link from "next/link";
 
-export default function FloatingFortuneLink() {
+export default function FloatingFortuneLink({ onActivate }: { onActivate?: () => void } = {}) {
   return (
-    <a
+    <Link
       className="floating-fortune-link"
       href="/daily-fortune"
       aria-label="오늘의 운세 페이지로 이동"
+      onClick={onActivate}
     >
-      <FortuneCharacterArt />
-      <span className="floating-fortune-copy">
-        <strong>오늘의 운세</strong>
-        <span>별빛 도사에게 물어보기</span>
-      </span>
-    </a>
+      <Image
+        className="floating-fortune-character"
+        src="/saju-fortune-character-hanbok-v01.png"
+        alt=""
+        width={1167}
+        height={1348}
+        sizes="(max-width: 520px) 112px, 180px"
+        priority
+      />
+    </Link>
   );
 }

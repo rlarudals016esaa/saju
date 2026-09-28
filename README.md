@@ -19,14 +19,6 @@ npm run dev
 
 2026-09-23 확인 시 현재 연결된 프로젝트에는 테이블이 있었고, 로그인한 계정의 결과 1건이 저장·조회됐습니다. 다른 계정의 결과가 보이지 않는지와 실제 데이터베이스 정책은 아직 확인해야 합니다.
 
-## 오늘의 운세 Cron 설정
-
-1. `supabase/migrations/20260928_create_saju_daily_fortunes.sql`을 검토·백업한 뒤 대상 Supabase 프로젝트에 적용합니다.
-2. Vercel Production 환경변수에 `SUPABASE_SERVICE_ROLE_KEY`와 16자 이상의 임의 문자열인 `CRON_SECRET`을 등록합니다. 두 값은 브라우저에 노출되는 `NEXT_PUBLIC_` 변수로 만들지 않습니다.
-3. 필요하면 `DAILY_FORTUNE_BATCH_SIZE`를 설정합니다. Hobby Function 실행시간과 Gemini 호출 한도를 고려해 기본값은 10, 최댓값은 20입니다.
-4. 프로덕션으로 배포하면 `vercel.json`의 `0 21 * * *` 일정이 등록됩니다. Vercel Cron은 UTC를 사용하므로 한국 시간으로는 매일 오전 6시대에 실행됩니다.
-5. Vercel의 Project Settings → Cron Jobs 및 Runtime Logs에서 대상·성공·실패·잔여 작업 수를 확인합니다. 배치보다 사용자가 많아지면 Pro 플랜이나 지속성 있는 작업 큐로 이전합니다.
-
 ## 주요 문서
 
 - `docs/PRD.md`: 무엇을 왜 만들지 기록합니다.

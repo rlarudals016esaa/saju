@@ -26,4 +26,11 @@ Spec을 만들면 아래 목록에 파일명을 추가합니다. 구현과 검�
 - [ ] `018-unknown-birth-time.md` — 출생시간 미상 선택과 시주 제외 해석
 - [ ] `019-shared-result-links.md` — 로그인 없이 읽는 결과 공유 링크
 - [x] `020-link-preview-image.md` — 카카오톡 등 링크 공유 미리보기 이미지 로컬 구현·검증 완료 (공개 주소 확인 전)
-- [ ] `021-daily-fortune-cron.md` — Vercel Cron 기반 사용자별 오늘의 운세 사전 생성과 30일 보관
+- [ ] `021-daily-fortune-cron.md` — Spec 023 결정으로 적용하지 않음
+- [x] `022-floating-fortune-hanbok-character.md` — 오늘의 운세 플로팅 링크를 우측 상단 한복 캐릭터로 변경
+- [x] `023-deterministic-daily-fortune.md` — 저장된 사주와 오늘 날짜로 간단 운세 즉시 계산
+- [x] `028-floating-fortune-scroll-persistence.md` — 스크롤 중에도 오늘의 운세 캐릭터를 우측 상단에 고정
+- [x] `024-daily-fortune-birthdate-gate.md` — 생년월일 입력 뒤 오늘의 운세 계산 및 검증 완료
+- [x] `025-hide-floating-fortune-on-birth-page.md` — 생년월일 입력 화면 플로팅 링크 제거 및 검증 완료
+- [x] `026-show-floating-fortune-after-reading.md` — 해석 결과가 나타난 뒤 플로팅 배너 표시 및 자동 검증 완료
+- [x] `027-one-click-daily-fortune-from-reading.md` — 해석에 사용한 생일로 재입력 없이 오늘의 운세 보기 및 자동 검증 완료

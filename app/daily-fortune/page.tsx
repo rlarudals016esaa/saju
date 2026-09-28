@@ -17,7 +17,7 @@ export default async function DailyFortunePage() {
     <main>
       <header className="page-header">
         <h1><span>오늘을 살펴보는</span> <span>나의 사주 이야기</span></h1>
-        <p className="intro">매일 아침 준비된 운세를 가볍게 읽고 오늘의 작은 행동을 정해보세요.</p>
+        <p className="intro">사주 해석에 입력한 생일과 오늘 날짜를 비교한 운세를 가볍게 읽고 작은 행동을 정해보세요.</p>
       </header>
       <DailyFortuneView />
     </main>

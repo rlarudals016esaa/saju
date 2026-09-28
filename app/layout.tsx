@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import { DailyFortuneHandoffProvider } from "./daily-fortune-handoff";
 import "./globals.css";
 
 const title = "나를 이해하는 사주 이야기";
@@ -32,7 +33,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
       <body>
-        {children}
+        <DailyFortuneHandoffProvider>{children}</DailyFortuneHandoffProvider>
         <footer className="font-attribution">
           <div id="reading-footer-meta" />
           서체: 강원랜드 「하이원 원추리 제목체」 · 공공누리 제1유형 ·{" "}

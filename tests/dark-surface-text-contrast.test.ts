@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const css = readFileSync(resolve(import.meta.dirname, "../app/globals.css"), "utf8");
+const css = readFileSync(resolve(import.meta.dirname, "../app/globals.css"), "utf8").replace(/\r\n?/g, "\n");
 
 function rule(selector: string): string {
   const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

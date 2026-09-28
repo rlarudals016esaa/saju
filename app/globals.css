@@ -193,47 +193,27 @@ small {
   text-align: center;
 }
 
-.fortune-character-art {
-  display: block;
-  flex: 0 0 66px;
-  width: 66px;
-  filter: drop-shadow(0 7px 8px rgba(34, 48, 91, 0.24));
-}
-
-.fortune-character-art svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
 .daily-fortune-date {
-  margin: 0 0 20px;
+  margin: 20px 0;
   color: var(--muted);
 }
 
 .floating-fortune-link {
   position: fixed;
   right: max(22px, env(safe-area-inset-right));
-  bottom: max(22px, env(safe-area-inset-bottom));
+  top: max(22px, env(safe-area-inset-top));
   z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: min(310px, calc(100vw - 44px));
-  padding: 10px 16px 10px 10px;
-  color: #17304f;
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(255, 248, 212, 0.97), rgba(213, 235, 255, 0.96));
-  box-shadow: 0 16px 40px rgba(4, 18, 48, 0.4);
+  display: block;
+  width: 180px;
+  border-radius: 32px;
   text-decoration: none;
   animation: floating-fortune-link 3.6s ease-in-out infinite;
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: transform 180ms ease, filter 180ms ease;
 }
 
 .floating-fortune-link:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 20px 44px rgba(4, 18, 48, 0.5);
+  filter: brightness(1.06);
 }
 
 .floating-fortune-link:focus-visible {
@@ -241,24 +221,11 @@ small {
   outline-offset: 4px;
 }
 
-.floating-fortune-link .fortune-character-art {
-  flex-basis: 66px;
-  width: 66px;
-}
-
-.floating-fortune-copy {
-  display: grid;
-  gap: 2px;
-}
-
-.floating-fortune-copy strong {
-  font-size: 18px;
-  font-weight: 700;
-}
-
-.floating-fortune-copy span {
-  color: #385d83;
-  font-size: 13px;
+.floating-fortune-character {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 14px 18px rgba(4, 18, 48, 0.42));
 }
 
 @keyframes floating-fortune-link {
@@ -292,8 +259,8 @@ small {
 
   .floating-fortune-link {
     right: max(12px, env(safe-area-inset-right));
-    bottom: max(12px, env(safe-area-inset-bottom));
-    width: min(260px, calc(100vw - 24px));
+    top: max(12px, env(safe-area-inset-top));
+    width: min(112px, calc(100vw - 24px));
   }
 }
 
@@ -392,8 +359,7 @@ small {
   font-size: clamp(25px, 4vw, 34px);
 }
 
-.daily-fortune-card section h4,
-.past-fortunes h3 {
+.daily-fortune-card section h4 {
   margin: 0 0 8px;
   font-size: 20px;
 }
@@ -414,48 +380,6 @@ small {
   padding: 18px;
   border-radius: 12px;
   background: var(--soft);
-}
-
-.past-fortunes {
-  margin-top: 30px;
-}
-
-.past-fortunes details {
-  margin-top: 10px;
-  padding: 14px 16px;
-  color: var(--text);
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.9);
-}
-
-.past-fortunes summary {
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.past-fortunes p {
-  margin: 12px 0 0;
-  line-height: 1.7;
-}
-
-.past-fortunes dl {
-  display: grid;
-  gap: 12px;
-  margin: 16px 0 0;
-}
-
-.past-fortunes dl div {
-  display: grid;
-  gap: 4px;
-}
-
-.past-fortunes dt {
-  font-weight: 700;
-}
-
-.past-fortunes dd {
-  margin: 0;
-  line-height: 1.7;
 }
 
 .form-intro {

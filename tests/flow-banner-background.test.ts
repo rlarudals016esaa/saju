@@ -5,7 +5,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const projectRoot = resolve(import.meta.dirname, "..");
-const css = readFileSync(resolve(projectRoot, "app", "globals.css"), "utf8");
+const css = readFileSync(resolve(projectRoot, "app", "globals.css"), "utf8").replace(/\r\n?/g, "\n");
 const bannerImage = "saju-flow-night-2026-09-23-v01.png";
 
 function rule(selector: string): string {

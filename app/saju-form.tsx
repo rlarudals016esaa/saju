@@ -14,6 +14,8 @@ import ElementChart from "./element-chart";
 import FlowBanner from "./flow-banner";
 import RelationCards from "./relation-cards";
 import FinanceTiming from "./finance-timing";
+import FloatingFortuneLink from "./floating-fortune-link";
+import { useDailyFortuneHandoff } from "./daily-fortune-handoff";
 import ResultFooterMeta from "./result-footer-meta";
 import ShareButton from "./share-button";
 import {
@@ -22,7 +24,9 @@ import {
 } from "../lib/saju/flow";
 
 export default function SajuForm({ userId }: { userId: string }) {
+  const { prepareBirthDate } = useDailyFortuneHandoff();
   const [result, setResult] = useState<HistoryItem | null>(null);
+  const [resultBirthDate, setResultBirthDate] = useState("");
   const [legacyResultPresent, setLegacyResultPresent] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<ReadingTopic>("career");
   const [error, setError] = useState("");
@@ -69,6 +73,7 @@ export default function SajuForm({ userId }: { userId: string }) {
       const item = parseHistoryItem(payload);
       if (!item) throw new Error("해석 결과의 형식을 확인하지 못했습니다. 다시 시도해 주세요.");
       setResult(item);
+      setResultBirthDate(input.date);
       setSelectedTopic("career");
       if (!item.saved) setStorageNotice("해석은 표시되지만 데이터베이스에 저장되지 않았습니다. 새로고침하면 사라질 수 있습니다.");
     } catch (caught) {
@@ -93,7 +98,10 @@ export default function SajuForm({ userId }: { userId: string }) {
     try {
       const response = await fetch(`/api/readings/${item.id}`, { method: "DELETE" });
       if (!response.ok) throw new Error("저장 결과를 삭제하지 못했습니다.");
-      if (result?.id === item.id) setResult(null);
+      if (result?.id === item.id) {
+        setResult(null);
+        setResultBirthDate("");
+      }
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "저장 결과를 삭제하지 못했습니다.");
     }
@@ -103,6 +111,7 @@ export default function SajuForm({ userId }: { userId: string }) {
   const relations = result ? buildRelationGuide(result.chart) : null;
 
   return (
+    <>
     <section className="input-card" aria-labelledby="input-title">
       <h2 id="input-title">언제 태어나셨나요?</h2>
       <p className="form-intro">양력 생년월일과 태어난 시간을 입력해주세요. 정확한 시간을 모르면 시간 모름을 선택할 수 있습니다.</p>
@@ -152,7 +161,13 @@ export default function SajuForm({ userId }: { userId: string }) {
           <section className="result" aria-labelledby="result-title">
             <ResultFooterMeta generatedAt={result.generatedAt} saved={result.saved} />
             <div className="result-meta">
-              <button type="button" onClick={() => result.saved ? void handleDelete(result) : setResult(null)}>{result.saved ? "이 결과 삭제" : "화면에서 닫기"}</button>
+              <button type="button" onClick={() => {
+                if (result.saved) void handleDelete(result);
+                else {
+                  setResult(null);
+                  setResultBirthDate("");
+                }
+              }}>{result.saved ? "이 결과 삭제" : "화면에서 닫기"}</button>
               {result.saved && result.id && <ShareButton readingId={result.id} />}
             </div>
             <h2 id="result-title">{result.reading.headline}</h2>
@@ -239,5 +254,9 @@ export default function SajuForm({ userId }: { userId: string }) {
         )}
       </div>
     </section>
+    {result && resultBirthDate && (
+      <FloatingFortuneLink onActivate={() => prepareBirthDate(resultBirthDate)} />
+    )}
+    </>
   );
 }
