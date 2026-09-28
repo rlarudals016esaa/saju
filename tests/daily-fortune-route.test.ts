@@ -1,96 +1,73 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { createGet, createPost } from "../app/api/daily-fortunes/route";
+import { calculate } from "../lib/saju/chart";
+import { calculateDailyFortune } from "../lib/saju/daily-fortune";
+import { createPost } from "../app/api/daily-fortunes/route";
 
-const fortune = {
-  headline: "오늘의 기준을 살펴보세요", overall: "전체 흐름을 차분히 확인해 보세요.",
-  workStudy: "작은 일부터 시작해 보세요.", finance: "지출 계획을 확인해 보세요.",
-  relationships: "대화를 천천히 이어가 보세요.", action: "할 일 하나를 적어보세요.",
-};
-
-function userClient(userId: string | null, rows: unknown[] = []) {
-  const calls: Array<[string, unknown]> = [];
-  const query = {
-    select(value: string) { calls.push(["select", value]); return query; },
-    eq(column: string, value: unknown) { calls.push([`eq:${column}`, value]); return query; },
-    gte(column: string, value: unknown) { calls.push([`gte:${column}`, value]); return query; },
-    async order(column: string, options: unknown) {
-      calls.push([`order:${column}`, options]);
-      return { data: rows, error: null };
-    },
-  };
+function userClient(userId: string | null) {
+  const calls: string[] = [];
   const client = {
-    auth: { async getUser() { return { data: { user: userId ? { id: userId } : null }, error: null }; } },
-    from(table: string) { calls.push(["from", table]); return query; },
+    auth: { async getUser() {
+      calls.push("getUser");
+      return { data: { user: userId ? { id: userId } : null }, error: null };
+    } },
+    from(table: string) { calls.push(`from:${table}`); throw new Error("오늘의 운세는 DB를 읽거나 쓰지 않아야 합니다."); },
   };
   return { calls, factory: (async () => client) as never };
 }
 
-async function withKey(run: () => Promise<void>) {
-  const old = process.env.GEMINI_API_KEY;
-  process.env.GEMINI_API_KEY = "test-key";
-  try { await run(); } finally {
-    if (old === undefined) delete process.env.GEMINI_API_KEY; else process.env.GEMINI_API_KEY = old;
-  }
-}
-
-test("운세 조회와 누락 생성은 로그인 전에 DB 또는 관리자 권한을 사용하지 않는다", async () => withKey(async () => {
-  const db = userClient(null);
-  let adminCalls = 0;
-  let generationCalls = 0;
-  const now = () => new Date("2026-09-28T21:10:00.000Z");
-  const getResponse = await createGet({ createClient: db.factory, now })();
-  const postResponse = await createPost({
-    createClient: db.factory,
-    createAdminClient: (() => { adminCalls++; return {}; }) as never,
-    generateForUser: (async () => { generationCalls++; return { outcome: "created", fortune }; }) as never,
-    now,
-  })();
-  assert.equal(getResponse.status, 401);
-  assert.equal(postResponse.status, 401);
-  assert.deepEqual(db.calls, []);
-  assert.equal(adminCalls, 0);
-  assert.equal(generationCalls, 0);
-}));
-
-test("로그인 사용자는 한국 오늘부터 최근 30일 완료 운세만 최신순 조회한다", async () => {
-  const rows = [{ id: "fortune-a", fortune_date: "2026-09-29", fortune, created_at: "2026-09-28T21:10:00Z" }];
-  const db = userClient("user-a", rows);
-  const response = await createGet({
-    createClient: db.factory,
-    now: () => new Date("2026-09-28T21:10:00.000Z"),
-  })();
-  assert.equal(response.status, 200);
-  assert.deepEqual(await response.json(), { today: "2026-09-29", items: rows });
-  assert.ok(db.calls.some(([name, value]) => name === "eq:user_id" && value === "user-a"));
-  assert.ok(db.calls.some(([name, value]) => name === "eq:status" && value === "completed"));
-  assert.ok(db.calls.some(([name, value]) => name === "gte:fortune_date" && value === "2026-08-31"));
-  assert.ok(db.calls.some(([name, value]) => name === "order:fortune_date" && (value as { ascending?: boolean }).ascending === false));
+const now = () => new Date("2026-09-28T21:10:00Z");
+const request = (body: unknown, contentType = "application/json") => new Request("http://localhost/api/daily-fortunes", {
+  method: "POST", headers: { "Content-Type": contentType }, body: JSON.stringify(body),
 });
 
-test("오늘 운세가 없을 때 로그인 사용자 한 명만 생성하고 사주 없음은 안내한다", async () => withKey(async () => {
-  const db = userClient("user-a");
-  const requests: unknown[] = [];
-  const now = () => new Date("2026-09-28T21:10:00.000Z");
-  const created = await createPost({
-    createClient: db.factory,
-    createAdminClient: (() => ({ role: "service" })) as never,
-    generateForUser: (async (options: unknown) => { requests.push(options); return { outcome: "created", fortune }; }) as never,
-    now,
-  })();
-  assert.equal(created.status, 200);
-  assert.equal((await created.json()).outcome, "created");
-  const request = requests[0] as { userId: string; fortuneDate: string; apiKey: string };
-  assert.equal(request.userId, "user-a");
-  assert.equal(request.fortuneDate, "2026-09-29");
-  assert.equal(request.apiKey, "test-key");
+test("비로그인 요청은 입력을 계산하거나 사주 테이블을 조회하기 전에 거절한다", async () => {
+  const db = userClient(null);
+  const response = await createPost({ createClient: db.factory, now })(request({ date: "not-a-date" }));
+  assert.equal(response.status, 401);
+  assert.match((await response.json()).error, /로그인/);
+  assert.deepEqual(db.calls, ["getUser"]);
+});
 
-  const noReading = await createPost({
-    createClient: db.factory,
-    createAdminClient: (() => ({})) as never,
-    generateForUser: (async () => ({ outcome: "no_reading" })) as never,
-    now,
-  })();
-  assert.equal(noReading.status, 409);
-  assert.equal((await noReading.json()).code, "no_reading");
-}));
+test("제출한 양력 생일을 시주 제외 사주로 계산해 한국 오늘 운세를 반환한다", async () => {
+  const db = userClient("user-a");
+  const response = await createPost({ createClient: db.factory, now })(request({ date: "2000-01-01" }));
+  assert.equal(response.status, 200);
+  const payload = await response.json();
+  const chart = calculate({ date: "2000-01-01", time: "", unknownTime: true, calendar: "solar", topic: "general" });
+  assert.equal(chart.pillars.length, 3);
+  assert.equal(payload.today, "2026-09-29");
+  assert.deepEqual(payload.fortune, calculateDailyFortune(chart, "2026-09-29"));
+  assert.equal(payload.transit.date, "2026-09-29");
+  assert.deepEqual(db.calls, ["getUser"]);
+  assert.equal(response.headers.get("Cache-Control"), "private, no-store");
+});
+
+test("생일을 다르게 제출하면 해당 생일로 다시 계산하고 결과를 저장하지 않는다", async () => {
+  const db = userClient("user-a");
+  const post = createPost({ createClient: db.factory, now });
+  const first = await (await post(request({ date: "2000-01-01" }))).json();
+  const second = await (await post(request({ date: "2001-01-01" }))).json();
+  const secondChart = calculate({ date: "2001-01-01", time: "", unknownTime: true, calendar: "solar", topic: "general" });
+  assert.deepEqual(second.fortune, calculateDailyFortune(secondChart, "2026-09-29"));
+  assert.notDeepEqual(first.fortune, second.fortune);
+  assert.deepEqual(db.calls, ["getUser", "getUser"]);
+});
+
+test("누락·형식 오류·존재하지 않는 생일은 운세 없이 거절한다", async () => {
+  const db = userClient("user-a");
+  const post = createPost({ createClient: db.factory, now });
+  for (const body of [{}, { date: "2000-02-30" }, { date: "abc" }, { date: 1234 }]) {
+    const response = await post(request(body));
+    assert.equal(response.status, 400, JSON.stringify(body));
+    assert.equal("fortune" in await response.json(), false);
+  }
+  assert.deepEqual(db.calls, ["getUser", "getUser", "getUser", "getUser"]);
+});
+
+test("JSON이 아닌 요청은 사주 계산 전에 거절한다", async () => {
+  const db = userClient("user-a");
+  const response = await createPost({ createClient: db.factory, now })(request({ date: "2000-01-01" }, "text/plain"));
+  assert.equal(response.status, 415);
+  assert.deepEqual(db.calls, ["getUser"]);
+});

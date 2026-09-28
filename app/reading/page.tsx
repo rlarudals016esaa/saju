@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "../../lib/supabase/server";
 import SajuForm from "../saju-form";
-import FloatingFortuneLink from "../floating-fortune-link";
 
 export default async function ReadingPage() {
   let userId: string | null = null;
@@ -21,7 +20,6 @@ export default async function ReadingPage() {
         <p className="intro">나의 성향과 강점·약점을 먼저 살펴보고, 고민하는 분야의 조언을 읽어보세요.</p>
       </header>
       <SajuForm userId={userId} />
-      <FloatingFortuneLink />
     </main>
   );
 }
