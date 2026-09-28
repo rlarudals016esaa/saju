@@ -26,3 +26,10 @@
 - 회귀 시험: 독립 서브에이전트가 플로팅 링크의 카드 외부 렌더링, 표시 조건, 생년월일 전달·초기화와 기존 고정 위치 CSS를 검사하도록 보강했으며 관련 시험 9개가 모두 통과했습니다.
 - 전체 검증: `npm run check`에서 TypeScript 검사와 전체 시험 127개가 통과했고, `npm run build`도 통과했습니다.
 - 화면 검증: 브라우저에서 1,504px 스크롤한 뒤에도 우측 간격은 44.24px로 동일했고, 상단 위치는 둥실거림 애니메이션 범위 안에서만 20.64px에서 17.81px로 변했습니다.
+
+## 배포 기록
+
+- 2026-09-28 Vercel Production 배포 `9dd9efb38a136146f0203d40ccb1a878f8830249`가 성공했습니다.
+- 배포 URL: `https://saju-3hy0r8vkl-rlarudals016esaa.vercel.app`
+- `PASS`: 비밀값 검사, `npm run check`의 TypeScript 검사와 자동 시험 134개, `npm run build`, GitHub의 Vercel Production 상태를 확인했습니다.
+- `NOT TESTED`: Vercel Deployment Protection이 루트와 캐릭터 이미지 요청을 로그인 화면으로 전환하므로, 공개 URL에서 Google 로그인 → 사주 해석 → 플로팅 캐릭터 클릭 → 오늘의 운세 표시 흐름은 확인하지 못했습니다.
