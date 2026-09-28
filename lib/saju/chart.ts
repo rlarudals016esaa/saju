@@ -25,6 +25,7 @@ export type SajuChart = {
   pillars: Pillar[];
   elements: Record<"목" | "화" | "토" | "금" | "수", number>;
   dayMaster: { character: string; korean: string; element: string };
+  birthTimeKnown?: boolean;
   method: string;
   engine: string;
   elementMethod: string;
@@ -85,6 +86,8 @@ const branchElement = [
 
 export const CALCULATION =
   "양력 · 한국 표준시(UTC+9) · 23시 일자 변경 · 진태양시 보정 없음";
+export const UNKNOWN_TIME_CALCULATION =
+  "양력 · 출생시간 미반영(정오 기준으로 연주·월주·일주 계산, 시주 제외) · 진태양시 보정 없음";
 
 export function validateInput(raw: SajuInput): SajuInput {
   if (!raw || typeof raw !== "object" || Array.isArray(raw))
@@ -109,15 +112,13 @@ export function validateInput(raw: SajuInput): SajuInput {
     throw new InputError("실제로 존재하는 날짜를 입력해주세요.", "date");
   if (year < 1990)
     throw new InputError("1990년 1월 1일 이후의 날짜를 지원합니다.", "date");
-  if (raw.unknownTime === true)
-    throw new InputError(
-      "이번 버전은 출생 시각을 아는 경우에만 계산합니다.",
-      "unknownTime",
-    );
-  if (
+  if (raw.unknownTime !== undefined && typeof raw.unknownTime !== "boolean")
+    throw new InputError("출생시간 선택을 확인해주세요.", "unknownTime");
+  const unknownTime = raw.unknownTime === true;
+  if (!unknownTime && (
     typeof raw.time !== "string" ||
     !/^([01]\d|2[0-3]):[0-5]\d$/.test(raw.time)
-  )
+  ))
     throw new InputError("태어난 시각을 정확히 입력해주세요.", "time");
   if (!["general", "career", "relationship"].includes(raw.topic))
     throw new InputError("풀이 주제를 선택해주세요.", "topic");
@@ -130,9 +131,9 @@ export function validateInput(raw: SajuInput): SajuInput {
 
   return {
     date,
-    time: raw.time,
+    time: unknownTime ? "12:00" : raw.time,
     calendar: "solar",
-    unknownTime: false,
+    unknownTime,
     topic: raw.topic,
     question,
   };
@@ -178,8 +179,8 @@ export function calculate(raw: SajuInput): SajuChart {
     pillar("년주", terms.getYear()),
     pillar("월주", terms.getMonth()),
     pillar("일주", local.getDay()),
-    pillar("시주", local.getTime()),
   ];
+  if (!input.unknownTime) pillars.push(pillar("시주", local.getTime()));
   const elements: SajuChart["elements"] = {
     목: 0,
     화: 0,
@@ -200,9 +201,10 @@ export function calculate(raw: SajuInput): SajuChart {
       korean: stemKo[stems.indexOf(pillars[2].stem)],
       element: pillars[2].stemElement,
     },
-    method: CALCULATION,
+    birthTimeKnown: !input.unknownTime,
+    method: input.unknownTime ? UNKNOWN_TIME_CALCULATION : CALCULATION,
     engine: "lunar-javascript@1.7.7",
     elementMethod:
-      "천간과 지지의 대표 오행 8자를 센 값입니다. 지장간과 계절 가중치를 반영한 강약 판단은 아닙니다.",
+      `천간과 지지의 대표 오행 ${input.unknownTime ? "6자" : "8자"}를 센 값입니다. 지장간과 계절 가중치를 반영한 강약 판단은 아닙니다.`,
   };
 }

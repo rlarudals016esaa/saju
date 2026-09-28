@@ -33,7 +33,7 @@ export default function LoginPanel({ configurationError }: { configurationError:
     <section className="input-card login-card" aria-labelledby="login-title">
       <p className="result-label">나의 사주 이야기 시작하기</p>
       <h2 id="login-title">먼저 로그인해 주세요</h2>
-      <p>로그인 후 생년월일과 출생시간을 입력하고, 나만의 해석과 이전 결과를 볼 수 있습니다.</p>
+      <p>로그인 후 생년월일과 출생시간을 입력하거나 시간 모름을 선택하고, 나만의 해석과 이전 결과를 볼 수 있습니다.</p>
       <button type="button" onClick={handleLogin} disabled={configurationError || loading}>
         {loading ? "Google 로그인 화면으로 이동 중…" : "Google로 로그인"}
       </button>

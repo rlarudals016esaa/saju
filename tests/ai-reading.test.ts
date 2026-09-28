@@ -54,6 +54,29 @@ test("Gemini 요청은 지정 모델과 계산값을 사용하고 완전한 해�
   assert.match(requestBody, new RegExp(chart.dayMaster.character));
 });
 
+test("시간 미상 Gemini 요청은 세 기둥임과 시주·출생시간 추측 금지를 명시한다", async () => {
+  const chart = calculate({
+    date: "2000-01-01", time: "", unknownTime: true,
+    calendar: "solar", topic: "general", question: "",
+  });
+  let requestBody = "";
+  const fetcher: typeof fetch = async (_input, init) => {
+    requestBody = String(init?.body);
+    return new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text: JSON.stringify(completeReading) }] } }] }), {
+      status: 200,
+      headers: { "content-type": "application/json" },
+    });
+  };
+
+  await generateReading(chart, "test-secret-key", fetcher);
+  const prompt = JSON.parse(requestBody).contents[0].parts[0].text as string;
+  assert.match(prompt, /출생시간을 모르므로/);
+  assert.match(prompt, /시주가 제외된 세 기둥/);
+  assert.match(prompt, /시주나 출생시간을 추측하지 말고/);
+  assert.match(prompt, /"birthTimeKnown":false/);
+  assert.doesNotMatch(prompt, /"label":"시주"/);
+});
+
 test("Gemini 실패와 불완전한 응답은 성공 결과로 바꾸지 않는다", async () => {
   const chart = calculate({ date: "2000-01-01", time: "12:00", calendar: "solar", topic: "general", question: "" });
   const failed: typeof fetch = async () => new Response("{}", { status: 429 });

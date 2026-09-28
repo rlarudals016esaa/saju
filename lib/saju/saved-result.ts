@@ -22,7 +22,10 @@ function nonempty(value: unknown): value is string {
 }
 
 function validChart(value: unknown): value is SajuChart {
-  if (!isRecord(value) || !Array.isArray(value.pillars) || value.pillars.length !== 4) return false;
+  if (!isRecord(value) || !Array.isArray(value.pillars)) return false;
+  const birthTimeKnown = value.birthTimeKnown !== false;
+  if (value.birthTimeKnown !== undefined && typeof value.birthTimeKnown !== "boolean") return false;
+  if (value.pillars.length !== (birthTimeKnown ? 4 : 3)) return false;
   if (!value.pillars.every((item: unknown) =>
     isRecord(item) && ["label", "text", "korean", "stem", "branch", "stemElement", "branchElement"]
       .every((field) => nonempty(item[field])))) return false;
@@ -30,8 +33,8 @@ function validChart(value: unknown): value is SajuChart {
   if (!elements.includes(value.dayMaster.element as typeof elements[number])) return false;
   const counts = value.elements;
   if (!isRecord(counts) || !elements.every((element) =>
-    Number.isInteger(counts[element]) && (counts[element] as number) >= 0 && (counts[element] as number) <= 8)) return false;
-  if (elements.reduce((sum, element) => sum + (counts[element] as number), 0) !== 8) return false;
+    Number.isInteger(counts[element]) && (counts[element] as number) >= 0 && (counts[element] as number) <= (birthTimeKnown ? 8 : 6))) return false;
+  if (elements.reduce((sum, element) => sum + (counts[element] as number), 0) !== (birthTimeKnown ? 8 : 6)) return false;
   return nonempty(value.method) && nonempty(value.engine) && nonempty(value.elementMethod);
 }
 

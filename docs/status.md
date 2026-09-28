@@ -23,3 +23,7 @@ Spec을 만들면 아래 목록에 파일명을 추가합니다. 구현과 검�
 - [x] `015-result-section-heading-size.md` — 오행 분포·분야별 조언 제목 크기 통일 및 검증 완료
 - [x] `016-result-footer-meta.md` — 결과 정보를 하단 서체 표기 앞으로 이동 및 자동 검증 완료
 - [x] `017-flow-banner-image-opacity.md` — 운의 흐름 배너 이미지 50% 투명도 적용 및 검증 완료
+- [ ] `018-unknown-birth-time.md` — 출생시간 미상 선택과 시주 제외 해석
+- [ ] `019-shared-result-links.md` — 로그인 없이 읽는 결과 공유 링크
+- [x] `020-link-preview-image.md` — 카카오톡 등 링크 공유 미리보기 이미지 로컬 구현·검증 완료 (공개 주소 확인 전)
+- [ ] `021-daily-fortune-cron.md` — Vercel Cron 기반 사용자별 오늘의 운세 사전 생성과 30일 보관

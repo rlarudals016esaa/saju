@@ -105,6 +105,33 @@ test("서버 계산값을 사용자 계정에 저장하고 같은 요청 재시�
   assert.equal(existing.calls.some(([name]) => name === "insert"), false);
 }));
 
+test("시간 미상 여부를 서버 계산에 전달하고 원본 날짜·시간 없이 3기둥 결과를 저장한다", async () => withKey(async () => {
+  const db = fakeClient({ userId: "user-a" });
+  let generatedChart: typeof chart | undefined;
+  const post = createPost({
+    createClient: db.createClient,
+    generateReading: async (received) => {
+      generatedChart = received;
+      return buildReading(received);
+    },
+  });
+  const response = await post(request({
+    date: "2000-01-01", time: "", unknownTime: true, requestId,
+  }, "test-unknown-time"));
+
+  assert.equal(response.status, 200);
+  const body = await response.json();
+  assert.equal(generatedChart?.birthTimeKnown, false);
+  assert.equal(generatedChart?.pillars.length, 3);
+  assert.equal(Object.values(generatedChart!.elements).reduce((sum, count) => sum + count, 0), 6);
+  assert.equal(body.chart.birthTimeKnown, false);
+  assert.equal(body.chart.pillars.length, 3);
+
+  const row = db.calls.find(([name]) => name === "insert")?.[1] as Record<string, unknown>;
+  assert.deepEqual(row.chart, generatedChart);
+  assert.doesNotMatch(JSON.stringify(row), /2000-01-01|12:00/);
+}));
+
 test("DB 조회 실패는 생성 중단, 저장 실패는 미저장 표시", async () => withKey(async () => {
   const unavailable = fakeClient({ lookupError: new Error("db offline") });
   const noGeneration = createPost({ createClient: unavailable.createClient, generateReading: async () => { throw new Error("should not run"); } });
