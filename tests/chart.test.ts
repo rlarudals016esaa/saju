@@ -51,7 +51,7 @@ for (const [changes, message] of [
   [{ date: "1989-12-31" }, "1990"],
   [{ time: "24:00" }, "시각"],
   [{ time: "12:60" }, "시각"],
-  [{ unknownTime: true }, "출생 시각"],
+  [{ unknownTime: "yes" }, "출생시간 선택"],
   [{ calendar: "lunar" }, "양력"],
   [{ question: "x".repeat(201) }, "200자"],
   [{ topic: "anything" }, "주제"],
@@ -68,6 +68,29 @@ test("윤일을 계산하고 대표 오행 합계가 여덟이다", () => {
     Object.values(chart.elements).reduce((sum, count) => sum + count, 0),
     8,
   );
+});
+
+test("시간 모름은 빈 시간을 허용하고 시주를 뺀 3기둥과 오행 6자만 계산한다", () => {
+  const input = validateInput({ ...base, time: "", unknownTime: true });
+  assert.equal(input.time, "12:00");
+  assert.equal(input.unknownTime, true);
+
+  const chart = calculate({ ...base, time: "", unknownTime: true });
+  assert.deepEqual(chart.pillars.map((item) => item.label), ["년주", "월주", "일주"]);
+  assert.equal(Object.values(chart.elements).reduce((sum, count) => sum + count, 0), 6);
+  assert.equal(chart.birthTimeKnown, false);
+  assert.match(chart.method, /출생시간 미반영/);
+  assert.match(chart.method, /시주 제외/);
+  assert.match(chart.elementMethod, /6자/);
+});
+
+test("시간을 입력한 기존 흐름은 4기둥과 오행 8자를 유지한다", () => {
+  const chart = calculate(base);
+  assert.deepEqual(chart.pillars.map((item) => item.label), ["년주", "월주", "일주", "시주"]);
+  assert.equal(Object.values(chart.elements).reduce((sum, count) => sum + count, 0), 8);
+  assert.equal(chart.birthTimeKnown, true);
+  assert.doesNotMatch(chart.method, /출생시간 미반영/);
+  assert.match(chart.elementMethod, /8자/);
 });
 
 test("일주를 한글 간지로 표시할 수 있다", () => {

@@ -64,13 +64,14 @@ export function createPost(deps: Dependencies = { createClient, generateReading 
         const input: SajuInput = {
           date: fields.date as string,
           time: fields.time as string,
+          unknownTime: fields.unknownTime === true,
           calendar: "solar",
           topic: "general",
         };
         chart = calculate(input);
       } catch (caught) {
         return reply({
-          error: caught instanceof InputError ? caught.message : "생년월일과 출생시간을 확인해 주세요.",
+          error: caught instanceof InputError ? caught.message : "생년월일과 출생시간 선택을 확인해 주세요.",
           code: "invalid_input",
         }, 400);
       }

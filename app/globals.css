@@ -193,6 +193,79 @@ small {
   text-align: center;
 }
 
+.fortune-character-art {
+  display: block;
+  flex: 0 0 66px;
+  width: 66px;
+  filter: drop-shadow(0 7px 8px rgba(34, 48, 91, 0.24));
+}
+
+.fortune-character-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.daily-fortune-date {
+  margin: 0 0 20px;
+  color: var(--muted);
+}
+
+.floating-fortune-link {
+  position: fixed;
+  right: max(22px, env(safe-area-inset-right));
+  bottom: max(22px, env(safe-area-inset-bottom));
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: min(310px, calc(100vw - 44px));
+  padding: 10px 16px 10px 10px;
+  color: #17304f;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 248, 212, 0.97), rgba(213, 235, 255, 0.96));
+  box-shadow: 0 16px 40px rgba(4, 18, 48, 0.4);
+  text-decoration: none;
+  animation: floating-fortune-link 3.6s ease-in-out infinite;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.floating-fortune-link:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 20px 44px rgba(4, 18, 48, 0.5);
+}
+
+.floating-fortune-link:focus-visible {
+  outline: 3px solid #fff4a8;
+  outline-offset: 4px;
+}
+
+.floating-fortune-link .fortune-character-art {
+  flex-basis: 66px;
+  width: 66px;
+}
+
+.floating-fortune-copy {
+  display: grid;
+  gap: 2px;
+}
+
+.floating-fortune-copy strong {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.floating-fortune-copy span {
+  color: #385d83;
+  font-size: 13px;
+}
+
+@keyframes floating-fortune-link {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 -7px; }
+}
+
 .history-navigation button,
 .history-more,
 .history-delete,
@@ -215,6 +288,12 @@ small {
   .history-navigation {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .floating-fortune-link {
+    right: max(12px, env(safe-area-inset-right));
+    bottom: max(12px, env(safe-area-inset-bottom));
+    width: min(260px, calc(100vw - 24px));
   }
 }
 
@@ -298,6 +377,87 @@ small {
   vertical-align: middle;
 }
 
+.daily-fortune-card {
+  --muted: #515154;
+  margin-top: 24px;
+  padding: 28px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.daily-fortune-card > h3 {
+  margin: 8px 0 24px;
+  font-size: clamp(25px, 4vw, 34px);
+}
+
+.daily-fortune-card section h4,
+.past-fortunes h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.daily-fortune-card section p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+.daily-fortune-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.daily-fortune-grid section {
+  padding: 18px;
+  border-radius: 12px;
+  background: var(--soft);
+}
+
+.past-fortunes {
+  margin-top: 30px;
+}
+
+.past-fortunes details {
+  margin-top: 10px;
+  padding: 14px 16px;
+  color: var(--text);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.past-fortunes summary {
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.past-fortunes p {
+  margin: 12px 0 0;
+  line-height: 1.7;
+}
+
+.past-fortunes dl {
+  display: grid;
+  gap: 12px;
+  margin: 16px 0 0;
+}
+
+.past-fortunes dl div {
+  display: grid;
+  gap: 4px;
+}
+
+.past-fortunes dt {
+  font-weight: 700;
+}
+
+.past-fortunes dd {
+  margin: 0;
+  line-height: 1.7;
+}
+
 .form-intro {
   margin: 0 0 28px;
   color: var(--muted);
@@ -354,6 +514,30 @@ button:hover {
   opacity: 0.82;
 }
 
+.unknown-time-option {
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  gap: 10px;
+  margin-top: 0;
+  cursor: pointer;
+}
+
+.unknown-time-option input {
+  width: 20px;
+  min-height: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.unknown-time-help {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 button:disabled {
   cursor: wait;
   opacity: 0.65;
@@ -402,6 +586,20 @@ input:focus-visible {
   border: 1px solid var(--border);
   border-radius: 16px;
   background: transparent;
+}
+
+.unknown-time-notice {
+  margin: 20px 0;
+  padding: 16px 18px;
+  border: 1px solid rgba(255, 214, 102, 0.55);
+  border-radius: 12px;
+  background: rgba(78, 52, 16, 0.55);
+  color: #fff5d6;
+  line-height: 1.6;
+}
+
+.unknown-time-notice p {
+  margin: 6px 0 0;
 }
 
 .result-label {
@@ -957,7 +1155,8 @@ input:focus-visible {
   }
 
   .flow-years,
-  .relation-grid {
+  .relation-grid,
+  .daily-fortune-grid {
     grid-template-columns: 1fr;
   }
 }
@@ -968,5 +1167,9 @@ input:focus-visible {
   *::after {
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+
+  .floating-fortune-link {
+    animation: none;
   }
 }

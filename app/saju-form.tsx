@@ -28,6 +28,7 @@ export default function SajuForm({ userId }: { userId: string }) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [storageNotice, setStorageNotice] = useState("");
+  const [unknownTime, setUnknownTime] = useState(false);
 
   useEffect(() => {
     try {
@@ -44,6 +45,7 @@ export default function SajuForm({ userId }: { userId: string }) {
     const input = {
       date: String(data.get("date") || ""),
       time: String(data.get("time") || ""),
+      unknownTime,
       requestId: crypto.randomUUID(),
     };
 
@@ -103,14 +105,30 @@ export default function SajuForm({ userId }: { userId: string }) {
   return (
     <section className="input-card" aria-labelledby="input-title">
       <h2 id="input-title">언제 태어나셨나요?</h2>
-      <p className="form-intro">양력 생년월일과 태어난 시간을 입력해주세요.</p>
+      <p className="form-intro">양력 생년월일과 태어난 시간을 입력해주세요. 정확한 시간을 모르면 시간 모름을 선택할 수 있습니다.</p>
       <form onSubmit={handleSubmit}>
         <fieldset disabled={loading}>
           <label htmlFor="date">생년월일</label>
           <input id="date" name="date" type="date" required />
 
           <label htmlFor="time">출생시간</label>
-          <input id="time" name="time" type="time" required />
+          <input id="time" name="time" type="time" required={!unknownTime} disabled={unknownTime} />
+          <label className="unknown-time-option" htmlFor="unknown-time">
+            <input
+              id="unknown-time"
+              name="unknownTime"
+              type="checkbox"
+              checked={unknownTime}
+              onChange={(event) => setUnknownTime(event.currentTarget.checked)}
+            />
+            시간 모름
+          </label>
+          {unknownTime && (
+            <p className="unknown-time-help">
+              시주를 제외하고 해석합니다. 정확한 출생시간이 없어 결과가 덜 세밀하거나 아쉬울 수 있으며,
+              절기 전환일이나 23시 전후 출생은 일부 계산값이 달라질 수 있습니다.
+            </p>
+          )}
 
           <button type="submit">
             {loading ? "해석을 만들고 있습니다…" : "내 사주 알아보기"}
@@ -139,6 +157,12 @@ export default function SajuForm({ userId }: { userId: string }) {
             </div>
             <h2 id="result-title">{result.reading.headline}</h2>
             <p className="tendency">{result.reading.tendency}</p>
+            {result.chart.birthTimeKnown === false && (
+              <div className="unknown-time-notice" role="note" aria-label="출생시간 미반영 안내">
+                <strong>출생시간 미반영</strong>
+                <p>시주를 제외한 결과입니다. 정확한 출생시간이 없어 해석이 덜 세밀하거나 아쉬울 수 있으며, 시간에 따라 일부 계산값이 달라질 수 있습니다.</p>
+              </div>
+            )}
 
             <div className="summary-grid">
               <article className="summary-card">

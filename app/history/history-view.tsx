@@ -74,6 +74,7 @@ export default function HistoryView() {
     <section className="input-card" aria-labelledby="history-title">
       <nav className="history-navigation" aria-label="사주 서비스 화면">
         <a href="/reading">생년월일 입력으로 돌아가기</a>
+        <a href="/daily-fortune">오늘의 운세</a>
         <button type="button" onClick={handleLogout}>로그아웃</button>
       </nav>
       <h2 id="history-title">저장된 해석 이력</h2>
@@ -100,6 +101,12 @@ export default function HistoryView() {
           {selected.id && <div className="result-meta"><ShareButton readingId={selected.id} /></div>}
           <h2 id="history-result-title">{selected.reading.headline}</h2>
           <p className="tendency">{selected.reading.tendency}</p>
+          {selected.chart.birthTimeKnown === false && (
+            <div className="unknown-time-notice" role="note" aria-label="출생시간 미반영 안내">
+              <strong>출생시간 미반영</strong>
+              <p>시주를 제외한 결과입니다. 정확한 출생시간이 없어 해석이 덜 세밀하거나 아쉬울 수 있으며, 시간에 따라 일부 계산값이 달라질 수 있습니다.</p>
+            </div>
+          )}
           <div className="summary-grid">
             <article className="summary-card"><h3>강점</h3><p>{selected.reading.strength}</p></article>
             <article className="summary-card"><h3>살펴볼 점</h3><p>{selected.reading.caution}</p></article>
